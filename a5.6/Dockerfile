@@ -1,4 +1,4 @@
-FROM menezesbr/ubuntu-server:u14.04
+FROM menezesbr/servers:u14.04a
 MAINTAINER André Menezes <menezesbr@gmail.com>
 
 # set some environment variables
