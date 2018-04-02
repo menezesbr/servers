@@ -70,3 +70,15 @@
 
 **Aponte o volume** `/var/www/html` **para seu diretório da aplicação local**
 
+
+
+# lampp56
+**Server com debian:jessie utilizando LAMPP x64 com PHP versão 5.6 -> xampp-linux-x64-5.6.21-0-installer.run**
+
+**Aponte o volume** `/opt/lampp/htdocs/` **para seu diretório da aplicação local**
+
+
+# lampp70
+**Server com debian:jessie utilizando LAMPP x64 com PHP versão 7.0 -> xampp-linux-x64-7.0.25-0-installer.run**
+
+**Aponte o volume** `/opt/lampp/htdocs/` **para seu diretório da aplicação local**
