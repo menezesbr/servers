@@ -96,17 +96,6 @@ RUN apt-get install -y nano zip unzip p7zip-full
 # install nodejs
 RUN apt-get install -y nodejs
 
-RUN /usr/local/bin/npm install -g yarn
-
-# install gulp
-RUN /usr/bin/npm install -g gulp
-
-# install bower
-RUN /usr/bin/npm install -g bower
-
-# install redis 
-RUN apt-get install -y redis-server
-
 # Create volumes
 VOLUME $_PATH
 VOLUME $_PATH/storage/export $_PATH/storage/upload
