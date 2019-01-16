@@ -1,14 +1,13 @@
 FROM menezesbr/servers:u14.04n
 MAINTAINER André Menezes <menezesbr@gmail.com>
 
+ENV APP_PATH /var/www/html/app
+
 # upgrade the container
 RUN apt-get update -y
-RUN apt-get upgrade -y
- 
-# install nginx
-RUN apt-get install --force-yes -y nginx
 
-COPY homestead /etc/nginx/sites-available/
+# install nginx
+RUN apt-get install -y --force-yes nginx
 
 RUN rm -rf /etc/nginx/sites-available/default && \
     rm -rf /etc/nginx/sites-enabled/default && \
@@ -18,21 +17,19 @@ RUN rm -rf /etc/nginx/sites-available/default && \
     echo "daemon off;" >> /etc/nginx/nginx.conf && \
     usermod -u 1000 www-data && \
     chown -Rf www-data.www-data /var/www/html/ && \
-    sed -i -e"s/worker_processes  1/worker_processes 5/" /etc/nginx/nginx.conf
-VOLUME ["/var/www/html/app"]
-VOLUME ["/etc/nginx/sites-available"]
+    sed -i -e"s/worker_processes 1/worker_processes 5/" /etc/nginx/nginx.conf
+VOLUME [$APP_PATH]
 VOLUME ["/var/cache/nginx"]
 VOLUME ["/var/log/nginx"]
 
-RUN apt-get update -y
-RUN apt-get upgrade -y
+WORKDIR $APP_PATH
+COPY homestead /etc/nginx/sites-available/
+COPY cacert.pem /usr/local/ssl/cert.pem
 
-# install php 7
-RUN apt-get install -y --force-yes php7.1 php7.1-gmp php7.1-bcmath php7.1-intl php7.1-curl \
-    php7.1-xml php7.1-soap php7.1-fpm php7.1-cli php7.1-common php7.1-mbstring php7.1-gd  \
-    php7.1-xml php7.1-mysql php7.1-mcrypt php7.1-zip php5.6-xml   
-
-
+# install php
+RUN apt-get install -y --force-yes php7.1-fpm php7.1-cli php7.1-dev php7.1-pgsql php7.1-sqlite3 php7.1-gd \
+    php-apcu php7.1-curl php7.1-mcrypt php7.1-imap php7.1-mysql php7.1-readline php-xdebug php-common \
+    php7.1-mbstring php7.1-xml php7.1-zip php7.1-gmp php7.1-soap php7.1-bcmath php7.1-intl 
 RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/php.ini && \
     sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.1/cli/php.ini && \
     sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/cli/php.ini && \
@@ -42,6 +39,8 @@ RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/ph
     sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" /etc/php/7.1/fpm/php.ini && \
     sed -i "s/post_max_size = .*/post_max_size = 100M/" /etc/php/7.1/fpm/php.ini && \
     sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.1/fpm/php.ini && \
+    sed -i "s/;extension=php_gmp.so.*/extension=php_gmp.so/" /etc/php/7.1/fpm/php.ini && \
+    sed -i "s/;extension=php_gmp.so.*/extension=php_gmp.so/" /etc/php/7.1/cli/php.ini && \
     sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/7.1/fpm/php-fpm.conf && \
     sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /etc/php/7.1/fpm/pool.d/www.conf && \
     sed -i -e "s/pm.max_children = 5/pm.max_children = 9/g" /etc/php/7.1/fpm/pool.d/www.conf && \
@@ -50,48 +49,18 @@ RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.1/cli/ph
     sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 4/g" /etc/php/7.1/fpm/pool.d/www.conf && \
     sed -i -e "s/pm.max_requests = 500/pm.max_requests = 200/g" /etc/php/7.1/fpm/pool.d/www.conf && \
     sed -i -e "s/;listen.mode = 0660/listen.mode = 0750/g" /etc/php/7.1/fpm/pool.d/www.conf && \
-    find /etc/php/7.1/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;    
+    find /etc/php/7.1/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
 
 COPY fastcgi_params /etc/nginx/
-
 RUN phpenmod mcrypt && \
     mkdir -p /run/php/ && chown -Rf www-data.www-data /run/php
-        
-COPY /php/7.1/cli/php.ini /etc/php/7.1/cli/php.ini
-COPY /php/7.1/fpm/php.ini /etc/php/7.1/fpm/php.ini
-
 
 # install sqlite 
-RUN apt-get install --force-yes -y sqlite3 libsqlite3-dev
-
-# install composer
-RUN curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /usr/local/bin/composer && \
-    printf "\nPATH=\"~/.composer/vendor/bin:\$PATH\"\n" | tee -a ~/.bashrc
-    
-# install prestissimo
-# RUN composer global require "hirak/prestissimo"
-
-# install laravel envoy
-RUN composer global require "laravel/envoy"
-
-#install laravel installer
-RUN composer global require "laravel/installer"
-
-# install nodejs
-RUN apt-get install -y nodejs
-
-# install gulp
-RUN /usr/bin/npm install -g gulp
-
-# install bower
-RUN /usr/bin/npm install -g bower
+RUN apt-get install -y sqlite3 libsqlite3-dev
 
 # install redis 
+RUN add-apt-repository ppa:chris-lea/redis-server -y 
 RUN apt-get install -y redis-server
-
-# install blackfire
-RUN apt-get install -y blackfire-agent blackfire-php
 
 # install beanstalkd
 RUN apt-get install -y --force-yes beanstalkd && \
@@ -99,14 +68,23 @@ RUN apt-get install -y --force-yes beanstalkd && \
     sed -i "s/#START=yes/START=yes/" /etc/default/beanstalkd && \
     /etc/init.d/beanstalkd start
 
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /usr/local/bin/composer && \
+    printf "\nPATH=\"~/.composer/vendor/bin:\$PATH\"\n" | tee -a ~/.bashrc 
+
+# Add Scripts
+ADD scripts/letsencrypt-setup /usr/bin/letsencrypt-setup
+ADD scripts/letsencrypt-renew /usr/bin/letsencrypt-renew
+RUN chmod 755 /usr/bin/letsencrypt-setup && chmod 755 /usr/bin/letsencrypt-renew
+# ADD scripts/start.sh /start.sh
+# ADD scripts/pull /usr/bin/pull
+# ADD scripts/push /usr/bin/push
+# RUN chmod 755 /usr/bin/pull && chmod 755 /usr/bin/push && chmod 755 /usr/bin/letsencrypt-setup && chmod 755 /usr/bin/letsencrypt-renew && chmod 755 /start.sh
+
 # install supervisor
-RUN apt-get install -y supervisor && \
-    mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 VOLUME ["/var/log/supervisor"]
-    
-# setup bash
-COPY .bash_aliases /root
 
 # clean up our mess
 RUN apt-get remove --purge -y software-properties-common && \
@@ -124,4 +102,3 @@ EXPOSE 80 443 6379
 # set container entrypoints
 ENTRYPOINT ["/bin/bash","-c"]
 CMD ["/usr/bin/supervisord"]
-    
