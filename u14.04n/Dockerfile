@@ -18,14 +18,25 @@ RUN apt-get install -y software-properties-common curl build-essential \
     debconf-utils python-software-properties software-properties-common nano zip unzip p7zip-full   
 
  # add some repositories
-RUN apt-add-repository ppa:nginx/stable -y  && \
-    apt-add-repository ppa:chris-lea/redis-server -y && \
-    apt-add-repository ppa:ondrej/php -y && \
-    LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php -y && \  
+RUN apt-add-repository ppa:nginx/stable -y 
+RUN apt-add-repository ppa:ondrej/php -y 
+RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 5072E1F5 
+RUN sh -c 'echo "deb http://repo.mysql.com/apt/ubuntu/ trusty mysql-5.7" >> /etc/apt/sources.list.d/mysql.list' && \
+    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main" >> /etc/apt/sources.list.d/postgresql.list' && \
     curl -s https://packagecloud.io/gpg.key | apt-key add - && \
     echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list && \
     curl --silent --location https://deb.nodesource.com/setup_8.x | bash - && \
     apt-get update
+
+#RUN apt-add-repository ppa:nginx/stable -y  && \
+#    apt-add-repository ppa:chris-lea/redis-server -y && \
+#    apt-add-repository ppa:ondrej/php -y && \
+#    LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php -y && \  
+#    curl -s https://packagecloud.io/gpg.key | apt-key add - && \
+#    echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list && \
+#    curl --silent --location https://deb.nodesource.com/setup_8.x | bash - && \
+#    apt-get update
 
 # set the locale
 RUN echo "LC_ALL=pt_BR.UTF-8" >> /etc/default/locale  && \
@@ -47,6 +58,8 @@ RUN /usr/bin/npm install -g gulp
 # install bower
 RUN /usr/bin/npm install -g bower    
 
+# install supervisor
 RUN apt-get install -y supervisor && \
     mkdir -p /var/log/supervisor
-    
+
+RUN apt-get install -y nano zip unzip p7zip-full      
