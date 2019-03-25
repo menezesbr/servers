@@ -4,7 +4,7 @@ LABEL version="1.2" maintainer="menezesbr@gmail.com"
 # If building on a RPi, use --build-arg cores=3 to use all cores when compiling
 # to speed up the image build
 ARG CORES
-ENV CORES ${CORES:-1}
+ENV CORES 3
 
 ENV APP_PATH /var/www/app/
 ENV CURL_VERSION 7.60.0
@@ -43,10 +43,6 @@ RUN apt-get update -y
 RUN apt-get install -y libgmp-dev re2c libmhash-dev libmcrypt-dev file
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/local/include/
 
-RUN docker-php-ext-configure gmp && docker-php-ext-install gmp
-RUN docker-php-ext-configure intl && docker-php-ext-install intl
-RUN docker-php-ext-configure soap && docker-php-ext-install soap
-
 # Install latest curl
 RUN cd /tmp && \
     wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
@@ -61,7 +57,7 @@ RUN cd /tmp && \
     tar -xvf curl-${CURL_VERSION}.tar.gz && \
     cd curl-${CURL_VERSION} && \
     ./configure --with-ssl --host=$(gcc -dumpmachine) && \
-    make -j${CORES} && \
+    make -j3 && \
     make install
 
 # Make sure that libcurl is using the newer curl libaries
@@ -127,6 +123,14 @@ ADD . $APP_PATH
 # Fix the link to curl:
 RUN rm -rf /usr/local/lib/libcurl.so.4 && ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4.4.0 /usr/local/lib/libcurl.so.4
 
+RUN docker-php-ext-configure gmp && docker-php-ext-install gmp
+RUN docker-php-ext-configure intl && docker-php-ext-install intl
+RUN docker-php-ext-configure soap && docker-php-ext-install soap
+RUN docker-php-ext-install calendar && docker-php-ext-configure calendar
+
+RUN rm /usr/local/lib/libcurl.so.4
+RUN ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4.3.0 /usr/local/lib/libcurl.so.4
+
 # Add Scripts
 ADD scripts/letsencrypt-setup /usr/bin/letsencrypt-setup
 ADD scripts/letsencrypt-renew /usr/bin/letsencrypt-renew
@@ -134,49 +138,7 @@ RUN chmod 755 /usr/bin/letsencrypt-setup && chmod 755 /usr/bin/letsencrypt-renew
 
 EXPOSE 443 80
 
-
-
-
-
-
-
-# ADD scripts/start.sh /start.sh
-# ADD scripts/pull /usr/bin/pull
-# ADD scripts/push /usr/bin/push
-# RUN chmod 755 /usr/bin/pull && chmod 755 /usr/bin/push && && chmod 755 /start.sh
-
-
-# Run composer
-#RUN composer install --prefer-dist --no-dev --no-scripts --no-suggest
-
-# Expose port 80
-
-# make sure the correct directories exists (suggested by @chrif):
-# RUN mkdir -p $APP_PATH/storage/app
-# RUN mkdir -p $APP_PATH/storage/app/public
-# RUN mkdir -p $APP_PATH/storage/build
-# RUN mkdir -p $APP_PATH/storage/database
-# RUN mkdir -p $APP_PATH/storage/debugbar
-# RUN mkdir -p $APP_PATH/storage/export
-# RUN mkdir -p $APP_PATH/storage/framework/cache
-# RUN mkdir -p $APP_PATH/storage/framework/sessions
-# RUN mkdir -p $APP_PATH/storage/framework/testing
-# RUN mkdir -p $APP_PATH/storage/framework/views
-# RUN mkdir -p $APP_PATH/storage/logs
-# RUN mkdir -p $APP_PATH/storage/upload
-
-# make sure we own the volumes:
-# RUN chown -R www-data:www-data -R /var/www/app/storage
-# RUN chmod -R 775 /var/www/app/storage
-
-# remove any lingering files that may break upgrades:
-# RUN rm -f /var/www/app/storage/logs/laravel.log
-
-# cat .env.docker | envsubst > .env
-# composer dump-autoload
-# php artisan package:discover
-# php artisan firefly:instructions install
 # RUN exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon
 
 # Run entrypoint thing
-# ENTRYPOINT [".deploy/docker/entrypoint.sh"]
+# ENTRYPOINT ["exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf --nodaemon"]
