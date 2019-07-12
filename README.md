@@ -1,36 +1,26 @@
 ### Serviores para docker
 
-# n72l
-- [x] Nginx 1.8.1
-- [x] PHP 7.0
+# n73l
+- [x] Nginx 1.17.1
+- [x] PHP 7.3
+- [x] PHP 7.2
 - [x] SQLite
-- [x] MySQL 5.7
 - [x] Redis
 - [x] NodeJS
-- [ ] PostgreSQL
-- [x] Beanstalkd
-- [x] Blackfire
 - [x] Bower
 - [x] Gulp
 - [x] Composer
-- [x] Laravel Envoy
-- [x] Laravel Installer
-- [ ] Lumen Installer
-
+- [ ] MySQL 5.7
+- [ ] PostgreSQL
 
 # a72l
-- [x] Apache 
+- [x] Apache 2
 - [x] PHP 7.2
 - [x] SQLite
 - [ ] MySQL 5.7
 - [ ] Redis
 - [x] NodeJS
 - [ ] PostgreSQL
-- [x] Beanstalkd
-- [ ] Blackfire
 - [x] Bower
 - [x] Gulp
 - [x] Composer
-- [x] Laravel Envoy
-- [x] Laravel Installer
-- [ ] Lumen Installer
