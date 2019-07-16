@@ -3,7 +3,6 @@
 # n73l
 - [x] Nginx 1.17.1
 - [x] PHP 7.3
-- [x] PHP 7.2
 - [x] SQLite
 - [x] Redis
 - [x] NodeJS

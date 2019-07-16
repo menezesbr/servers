@@ -54,40 +54,44 @@ RUN echo "LC_ALL=pt_BR.UTF-8" >> /etc/default/locale  && \
     ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 # install php 7.2
-RUN apt-get install -y --force-yes php7.2-fpm php7.2-cli php7.2-dev php7.2-pgsql php7.2-sqlite3 php7.2-gd \
-    php-apcu php7.2-curl php7.2-imap php7.2-mysql php7.2-readline php-xdebug php-common \
-    php7.2-mbstring php7.2-xml php7.2-zip
+# RUN apt-get install -y --force-yes php7.2-fpm php7.2-cli php7.2-dev php7.2-pgsql php7.2-sqlite3 php7.2-gd \
+#     php-apcu php7.2-curl php7.2-imap php7.2-mysql php7.2-readline php-xdebug php-common \
+#     php7.2-mbstring php7.2-xml php7.2-zip php7.2-gmp php7.2-intl php7.2-soap
 
-RUN apt-get -y install php-pear
-RUN apt-get -y install gcc make autoconf libc-dev pkg-config
-RUN apt-get -y install libmcrypt-dev
-RUN pecl install mcrypt-1.0.1
-RUN pecl channel-update pecl.php.net    
+# RUN apt-get -y install php-pear
+# RUN apt-get -y install gcc make autoconf libc-dev pkg-config
+# RUN apt-get -y install libmcrypt-dev
+# RUN pecl install mcrypt-1.0.1
+# RUN pecl channel-update pecl.php.net    
 
-RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini && \
-    sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini && \
-    sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini && \
-    sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/fpm/php.ini && \
-    sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/fpm/php.ini && \
-    sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.2/fpm/php.ini && \
-    sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" /etc/php/7.2/fpm/php.ini && \
-    sed -i "s/post_max_size = .*/post_max_size = 100M/" /etc/php/7.2/fpm/php.ini && \
-    sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini && \
-    sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/7.2/fpm/php-fpm.conf && \
-    sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    sed -i -e "s/pm.max_children = 5/pm.max_children = 9/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    sed -i -e "s/pm.start_servers = 2/pm.start_servers = 3/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    sed -i -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 2/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 4/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    sed -i -e "s/pm.max_requests = 500/pm.max_requests = 200/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    sed -i -e "s/;listen.mode = 0660/listen.mode = 0750/g" /etc/php/7.2/fpm/pool.d/www.conf && \
-    find /etc/php/7.2/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
+# RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/cli/php.ini && \
+#     sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/cli/php.ini && \
+#     sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/cli/php.ini && \
+#     sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.2/fpm/php.ini && \
+#     sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.2/fpm/php.ini && \
+#     sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/" /etc/php/7.2/fpm/php.ini && \
+#     sed -i "s/upload_max_filesize = .*/upload_max_filesize = 100M/" /etc/php/7.2/fpm/php.ini && \
+#     sed -i "s/post_max_size = .*/post_max_size = 100M/" /etc/php/7.2/fpm/php.ini && \
+#     sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php/7.2/fpm/php.ini && \
+#     sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g" /etc/php/7.2/fpm/php-fpm.conf && \
+#     sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     sed -i -e "s/pm.max_children = 5/pm.max_children = 9/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     sed -i -e "s/pm.start_servers = 2/pm.start_servers = 3/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     sed -i -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 2/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     sed -i -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 4/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     sed -i -e "s/pm.max_requests = 500/pm.max_requests = 200/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     sed -i -e "s/;listen.mode = 0660/listen.mode = 0750/g" /etc/php/7.2/fpm/pool.d/www.conf && \
+#     find /etc/php/7.2/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
 
+# RUN bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.2/cli/conf.d/mcrypt.ini"
+# RUN bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.2/mods-available/mcrypt.ini"
 
 # install php 7.3
 RUN apt-get install -y --force-yes php7.3-fpm php7.3-cli php7.3-dev php7.3-pgsql php7.3-sqlite3 php7.3-gd \
     php-apcu php7.3-curl php7.3-imap php7.3-mysql php7.3-readline php-xdebug php-common \
-    php7.3-mbstring php7.3-xml php7.3-zip
+    php7.3-mbstring php7.3-xml php7.3-zip php7.3-gmp php7.3-intl php7.3-soap
+
+RUN apt-get install -y php7.3-bcmath
 
 RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.3/cli/php.ini && \
     sed -i "s/display_errors = .*/display_errors = On/" /etc/php/7.3/cli/php.ini && \
@@ -108,19 +112,17 @@ RUN sed -i "s/error_reporting = .*/error_reporting = E_ALL/" /etc/php/7.3/cli/ph
     sed -i -e "s/;listen.mode = 0660/listen.mode = 0750/g" /etc/php/7.3/fpm/pool.d/www.conf && \
     find /etc/php/7.3/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \;
 
-RUN pecl install mcrypt-1.0.2    
+# RUN pecl install mcrypt-1.0.2    
 
-RUN bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.2/cli/conf.d/mcrypt.ini"
-RUN bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.2/mods-available/mcrypt.ini"
-RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/cli/conf.d/mcrypt.ini"
-RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/mods-available/mcrypt.ini"
+# RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/cli/conf.d/mcrypt.ini"
+# RUN bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/mods-available/mcrypt.ini"
 
 COPY fastcgi_params /etc/nginx/
-RUN phpenmod mcrypt && \
-    mkdir -p /run/php/ && chown -Rf www-data.www-data /run/php
+# RUN phpenmod mcrypt && \
+RUN mkdir -p /run/php/ && chown -Rf www-data.www-data /run/php
 
 # install sqlite 
-RUN apt-get install -y sqlite3 libsqlite3-dev
+RUN apt-get install -y sqlite3 libsqlite3-dev  php7.3-bcmath
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php && \
@@ -154,6 +156,8 @@ RUN apt-get remove --purge -y software-properties-common && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /usr/share/man/?? && \
     rm -rf /usr/share/man/??_*
+
+WORKDIR /var/www/html/app
 
 # expose ports
 EXPOSE 80 443 3306 6379
