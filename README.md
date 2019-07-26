@@ -23,3 +23,7 @@
 - [x] Bower
 - [x] Gulp
 - [x] Composer
+
+# django
+- [x] Python 3.7
+- [x] Django 2.2
