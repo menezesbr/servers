@@ -106,6 +106,9 @@ RUN /usr/bin/npm install -g gulp
 # install bower
 RUN /usr/bin/npm install -g bower
 
+# install yarn
+RUN /usr/bin/npm install -g yarn
+
 # install redis 
 RUN apt-get install -y redis-server
 
