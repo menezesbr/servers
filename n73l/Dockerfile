@@ -1,12 +1,12 @@
 FROM ubuntu:18.10
-LABEL version="1.0" maintainer="<André Menezes>menezesbr@gmail.com"
+LABEL version="1.1" maintainer="<André Menezes>menezesbr@gmail.com"
 
 RUN apt-get update && \
     apt-get upgrade -y
 
 RUN apt-get install -y curl build-essential
 # ?? software-properties-common
-RUN apt-get install -y locales curl wget unzip nano cron rsyslog supervisor python
+RUN apt-get install -y locales wget unzip nano cron rsyslog supervisor python
 RUN localedef -i pt_BR -c -f UTF-8 -A /usr/share/locale/locale.alias pt_BR.UTF-8
 RUN apt-get install -y dos2unix gcc git libmcrypt4 libpcre3-dev memcached make python2.7-dev
 RUN apt-get install -y python-pip re2c unattended-upgrades whois vim libnotify-bin debconf-utils

@@ -1,0 +1,30 @@
+FROM php:7.4-apache
+LABEL version="2.0" maintainer="<André Menezes>menezesbr@gmail.com"
+
+RUN apt-get update -y
+RUN apt-get install -y rpl zip unzip git vim curl nano p7zip-full
+
+RUN apt-get install -y libxml2-dev libcurl4-openssl-dev
+
+RUN docker-php-ext-install soap xml curl opcache gd sqlite3 mbstring
+
+
+
+
+
+# RUN apt-get install php7.4-soap 
+# php-xml php-curl php-opcache php-gd php-sqlite3 php-mbstring
+
+# RUN docker-php-ext-configure soap
+
+# RUN apt-get install apache2 php libapache2-mod-php
+# RUN apt-get install php-soap php-xml php-curl php-opcache php-gd php-sqlite3 php-mbstring
+# 
+
+# RUN a2dismod mpm_event
+# RUN a2dismod mpm_worker
+# RUN a2enmod  mpm_prefork
+# RUN a2enmod  rewrite
+# RUN a2enmod  php7.2
+
+# docker build -t menezesbr/servers:a74a .
