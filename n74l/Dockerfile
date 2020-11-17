@@ -116,9 +116,11 @@ RUN composer self-update
 RUN composer config --global repo.packagist composer https://packagist.org
 
 # install supervisor
-RUN apt-get install -y supervisor && \
-    mkdir -p /var/log/supervisor
+RUN apt-get install -y supervisor
+RUN mkdir -p /var/log/supervisor
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 VOLUME ["/var/log/supervisor"]
 
 # clean up our mess
