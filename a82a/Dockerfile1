@@ -1,0 +1,34 @@
+FROM php:8.2-fpm
+
+# Set default environment variables
+ENV TIMEZONE America/Sao_Paulo
+
+# Disable debconf warnings upon build
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Add PHP PPA Repository
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends software-properties-common
+
+# Set Timezone
+RUN ln -fs /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends tzdata \
+    && dpkg-reconfigure --frontend noninteractive tzdata
+
+# # Install some system extensions
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends rpl zip unzip git nano vim curl wget nano p7zip-full
+
+# Install Apache, PHP and PHP modules
+RUN apt-get install -y apache2 
+
+RUN apt-get install -y libapache2-mod-php8.2
+
+# libapache2-mod-php php-soap php-xml php-curl php-opcache php-gd php-sqlite3 \
+#         php-mbstring php8.1-cli php-common php8.1-common php8.1-opcache php8.1-readline php8.1-xml \
+#        php8.1-intl php8.1-mbstring php8.1-soap php8.1-curl php8.1-zip php8.1-mysql \
+#        php8.1-xdebug php8.1-memcached php8.1-gd php-mbstring php8.1-bcmath \
+#        php8.1-bz2 php8.1-xmlrpc php8.1-xsl php8.1-yaml php8.1-zmq \
+#        php8.1-dev php-pear build-essential libaio1 composer php8.1-sqlite3 php8.1-pgsql \
+#        php8.1-mysql php8.1-pdo-dblib php8.1-pdo-firebird php8.1-pdo-odbc

@@ -1,5 +1,3 @@
-# @description: Container de desenvolvimento/produção Adianti Framework 7.1.0
-
 FROM ubuntu:22.04
 
 # Set default environment variables
