@@ -30,8 +30,6 @@ RUN apt-get install -y --no-install-recommends php8.2 libapache2-mod-php php-soa
 
 RUN apt-get install -y mysql-client postgresql-client sqlite3
 
-RUN apt-get install opcache -y
-
 # Clean apt-get cache and temporary files
 RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
@@ -48,7 +46,7 @@ RUN a2dismod mpm_event \
 RUN LANG="en_US.UTF-8" rpl "AllowOverride None" "AllowOverride All" /etc/apache2/apache2.conf
 RUN echo "<VirtualHost *:80>" > /etc/apache2/sites-enabled/000-default.conf
 RUN echo "    ServerAdmin webmaster@localhost" >> /etc/apache2/sites-enabled/000-default.conf
-RUN echo "    DocumentRoot /var/www/html" >> /etc/apache2/sites-enabled/000-default.conf
+RUN echo "    DocumentRoot /var/www/html/public" >> /etc/apache2/sites-enabled/000-default.conf
 RUN echo "    ErrorLog \${APACHE_LOG_DIR}/error.log" >> /etc/apache2/sites-enabled/000-default.conf
 RUN echo "    CustomLog \${APACHE_LOG_DIR}/access.log combined" >> /etc/apache2/sites-enabled/000-default.conf
 RUN echo "</VirtualHost>" >> /etc/apache2/sites-enabled/000-default.conf
