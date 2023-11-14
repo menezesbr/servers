@@ -30,6 +30,25 @@ RUN apt-get install -y --no-install-recommends php8.2 libapache2-mod-php php-soa
 
 RUN apt-get install -y mysql-client postgresql-client sqlite3
 
+RUN apt install -y php-xdebug
+
+# Configure XDebug
+RUN echo "zend_extension=xdebug" > /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "[xdebug]" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "; xdebug.mode = coverage" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "; xdebug.mode = develop" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.mode = debug" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_enable = 1" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_connect_back = 0" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_autostart = 1" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.start_with_request = yes" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.discover_client_host = 1" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.client_port=9009" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.idekey = VSCODE" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.client_host = host.docker.internal" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+RUN echo "xdebug.idekey = PHPSTORM" >> /etc/php/8.2/cli/conf.d/20-xdebug.ini
+
+
 # Clean apt-get cache and temporary files
 RUN apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* \
